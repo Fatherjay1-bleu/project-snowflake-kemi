@@ -61,19 +61,7 @@ async def ask(body: AskRequest):
 
 @app.get("/", response_class=HTMLResponse)
 def dashboard():
-    return """<!doctype html><html><head><meta charset="utf-8"><title>Snowflake Cortex Intelligence</title>
-<style>body{background:#0d1524;color:#eef4ff;font-family:system-ui;margin:0;padding:42px;max-width:930px}
-h1{color:#63cef7}.panel{background:#19283d;border-radius:14px;padding:22px;margin:20px 0}
-input,button{font:inherit;padding:11px;border-radius:7px}input{width:70%}button{background:#28b6ec;border:0;cursor:pointer}
-pre{white-space:pre-wrap}</style></head><body><h1>❄ Snowflake Cortex Intelligence</h1>
-<p>AI-assisted data intelligence prototype • Demo mode uses synthetic data.</p>
-<div class="panel"><h2>Security event summary</h2><pre id="summary">Loading...</pre></div>
-<div class="panel"><h2>Ask the analyst</h2><input id="question" placeholder="Summarize these security events">
-<button onclick="ask()">Analyze</button><pre id="result"></pre></div>
-<script>
-fetch('/api/summary').then(r=>r.json()).then(j=>document.getElementById('summary').textContent=JSON.stringify(j,null,2));
-async function ask(){const q=document.getElementById('question').value;const r=await fetch('/api/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q})});document.getElementById('result').textContent=JSON.stringify(await r.json(),null,2)}
-</script></body></html>"""
+    return (Path(__file__).resolve().parent / "dashboard.html").read_text(encoding="utf-8")
 
 
 @app.get("/api/snowflake/status")
