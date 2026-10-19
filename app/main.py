@@ -74,3 +74,26 @@ pre{white-space:pre-wrap}</style></head><body><h1>❄ Snowflake Cortex Intellige
 fetch('/api/summary').then(r=>r.json()).then(j=>document.getElementById('summary').textContent=JSON.stringify(j,null,2));
 async function ask(){const q=document.getElementById('question').value;const r=await fetch('/api/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q})});document.getElementById('result').textContent=JSON.stringify(await r.json(),null,2)}
 </script></body></html>"""
+
+
+@app.get("/api/snowflake/status")
+def snowflake_status():
+    """Configuration state only; does not reveal or validate credentials."""
+    from app.snowflake_sql import configuration, SnowflakeConfigurationError
+    try:
+        configuration()
+        return {"configured": True, "connected": False, "note": "Credentials present; use /api/snowflake/events to verify connectivity"}
+    except SnowflakeConfigurationError:
+        return {"configured": False, "connected": False, "note": "Set Snowflake account URL and token privately"}
+
+@app.get("/api/snowflake/events")
+async def snowflake_events():
+    """Read actual events via Snowflake SQL API when explicitly configured."""
+    from app.snowflake_sql import fetch_security_events, SnowflakeConfigurationError
+    try:
+        rows = await fetch_security_events()
+        return {"source": "snowflake_sql_api", "events": rows, "count": len(rows)}
+    except SnowflakeConfigurationError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except (httpx.HTTPError, RuntimeError) as exc:
+        raise HTTPException(status_code=502, detail="Snowflake query failed or is still running") from exc
