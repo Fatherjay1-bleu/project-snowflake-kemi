@@ -1,0 +1,7 @@
+event_id,timestamp,severity,category,source,description
+EVT-001,2026-10-19T09:00:00Z,high,authentication,identity,Repeated failed login attempts
+EVT-002,2026-10-19T09:05:00Z,medium,network,firewall,Unusual outbound connections
+EVT-003,2026-10-19T09:10:00Z,low,endpoint,agent,Software update completed
+EVT-004,2026-10-19T09:15:00Z,critical,authentication,identity,Privileged account anomalous login
+EVT-005,2026-10-19T09:20:00Z,medium,endpoint,agent,Unexpected executable detected
+EVT-006,2026-10-19T09:25:00Z,high,network,firewall,Repeated blocked connections
